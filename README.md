@@ -2,8 +2,10 @@
 성수동 카페 웹 - Springboot 프레임워크 기반 웹 개발 프로젝트
 <br>
 프로젝트 기간 : 2025.05.20 ~ 2025.06.05
+<br>
+프로젝트 원본 : https://github.com/Ui-Geol/SeongsuBean
 
----
+
 <br>
 🎯 리팩토링 목적
 <br>
@@ -12,13 +14,13 @@
 - 테스트 코드 보완(레포지토리, 서비스 -> Junit/ 컨트롤러 -> postman, swagger) <br>
 - API 응답 구조 개선 / 이미지 업로드 방식 개선
 
----
 <br>
 ## 목차
 - [커밋 타입](#커밋-타입)
 - [브랜치 전략](#브랜치-전략)
 - [add와 implement의 차이](#add와-implemnt의-차이점)
 - [modify와 fix와 correct의 차이점](#modify와-fix와-correct의-차이점)
+
 
 ---
 <br>
