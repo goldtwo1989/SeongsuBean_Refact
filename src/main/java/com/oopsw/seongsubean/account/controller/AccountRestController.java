@@ -12,9 +12,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -129,6 +131,78 @@ public class AccountRestController {
 
     return ResponseEntity.ok("업로드 성공");
   }
+  @GetMapping("/me")
+  public ResponseEntity<UserDTO> getMyInfo(@AuthenticationPrincipal AccountDetails details) {
+    return ResponseEntity.ok(details.getUser());
+  }
 
+  @PutMapping
+  public ResponseEntity<?> updateUser(@RequestBody UserDTO form, @AuthenticationPrincipal AccountDetails details) {
+    if (form.getNewPassword() != null && !form.getNewPassword().isEmpty()) {
+      form.setNewPassword(bCryptPasswordEncoder.encode(form.getNewPassword()));
+    }
+    accountService.setUserInfo(form);
+    return ResponseEntity.ok("수정 완료");
+  }
+
+  @GetMapping("/myPost")
+  public ResponseEntity<?> getMyPosts(
+          @RequestParam(defaultValue = "1") int page,
+          @RequestParam(defaultValue = "10") int size,
+          Principal principal) {
+
+    String email = principal.getName();
+    int offset = (page - 1) * size;
+    RowBounds rowBounds = new RowBounds(offset, size);
+    List<Map<String, Object>> posts = accountService.getMyBoards(email, rowBounds);
+    int totalCount = accountService.countMyBoards(email);
+
+    return ResponseEntity.ok(Map.of(
+            "posts", posts,
+            "totalCount", totalCount,
+            "totalPages", (int) Math.ceil((double) totalCount / size),
+            "currentPage", page
+    ));
+  }
+
+  @GetMapping("/myCafe")
+  public ResponseEntity<?> getMyCafe(
+          @RequestParam(defaultValue = "1") int page,
+          @RequestParam(defaultValue = "10") int size,
+          Principal principal) {
+
+    String email = principal.getName();
+    int offset = (page - 1) * size;
+    RowBounds rowBounds = new RowBounds(offset, size);
+    List<Map<String, Object>> posts = accountService.getMyBoards(email, rowBounds);
+    int totalCount = accountService.countMyBoards(email);
+
+    return ResponseEntity.ok(Map.of(
+            "posts", posts,
+            "totalCount", totalCount,
+            "totalPages", (int) Math.ceil((double) totalCount / size),
+            "currentPage", page
+    ));
+  }
+
+  @GetMapping("/myReview")
+  public ResponseEntity<?> getMyReviews(
+          @RequestParam(defaultValue = "1") int page,
+          @RequestParam(defaultValue = "10") int size,
+          Principal principal) {
+
+    String email = principal.getName();
+    int offset = (page - 1) * size;
+    RowBounds rowBounds = new RowBounds(offset, size);
+    List<Map<String, Object>> posts = accountService.getMyBoards(email, rowBounds);
+    int totalCount = accountService.countMyBoards(email);
+
+    return ResponseEntity.ok(Map.of(
+            "posts", posts,
+            "totalCount", totalCount,
+            "totalPages", (int) Math.ceil((double) totalCount / size),
+            "currentPage", page
+    ));
+  }
 
 }
