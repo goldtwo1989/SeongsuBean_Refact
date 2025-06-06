@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/common}">
+<head>
+    <title layout:fragment="title">제보게시글 작성 - SeongsuBean</title>
+    <link layout:fragment="styles" rel="stylesheet" th:href="@{/css/board/post.css}" />
+    <link rel="stylesheet" href="https://uicdn.toast.com/editor/latest/toastui-editor.min.css">
+    <script src="https://uicdn.toast.com/editor/latest/toastui-editor-all.min.js"></script>
+</head>
+<body>
+
+<!-- Main Content -->
+<div layout:fragment="content">
+    <div class="main-container">
+        <h1 class="page-title" th:text="${mode} == 'update' ? '게시글 수정' : '게시글 쓰기'">게시글 쓰기</h1>
+
+        <form id="report-form" enctype="multipart/form-data">
+            <!-- Title Input -->
+            <div class="mb-4">
+                <input type="text" id="title" name="title" class="form-control" placeholder="제목을 입력하세요"
+                       th:value="${report?.title}" />
+
+            </div>
+
+            <!-- Toast UI Editor -->
+            <div class="mb-4">
+                <div id="editor" style="height: 500px;"></div>
+                <input type="hidden" name="content" id="editor-contents">
+            </div>
+
+            <!-- 이메일 hidden (로그인 연동 시 제거) -->
+            <input type="hidden" name="email" id="email" value="taylor1213@gmail.com" />
+            <!-- input type="hidden" name="email" id="email" th:value="${report?.email}" / -->
+
+
+            <!-- 이미지 업로드 -->
+            <div class="mb-4">
+                <input type="file" name="images" id="images" multiple accept="image/*">
+                <p class="img-limit-msg" style="color: gray; font-size: 14px;">이미지는 최대 5개까지 업로드할 수 있습니다.</p>
+            </div>
+
+            <!-- Buttons -->
+            <div class="action-buttons">
+                <button type="button" class="btn btn-cancel" id="cancel-btn">취소</button>
+                <button type="submit" class="btn btn-submit">게시하기</button>
+            </div>
+        </form>
+    </div>
+</div>
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/board/report-post.js}"></script>
+</th:block>
+</body>
+</html>

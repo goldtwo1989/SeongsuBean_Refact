@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oopsw.seongsubean.account.repository.AccountRepository">
+  <update id="setUserInfo" parameterType="com.oopsw.seongsubean.account.dto.UserDTO">
+    UPDATE USER_INFO
+    <set>
+      <if test="newPassword != null and !newPassword.isEmpty()">
+        PASSWORD = #{newPassword},
+      </if>
+      <if test="newNickName != null and !newNickName.isEmpty()">
+        NICKNAME = #{newNickName}
+      </if>
+    </set>
+    WHERE EMAIL = #{email}
+  </update>
+
+  <update id="setImage" parameterType="com.oopsw.seongsubean.account.dto.UserDTO">
+    update USER_INFO
+    set IMAGE = #{image}
+    where EMAIL = #{email}
+  </update>
+  <delete id="removeUser" parameterType="String">
+    delete from user_info where EMAIL=#{email}
+  </delete>
+
+  <select id="getUserInfo" parameterType="com.oopsw.seongsubean.account.dto.UserDTO"
+    resultType="com.oopsw.seongsubean.account.dto.UserDTO">
+    select nickname, image from USER_INFO
+    where EMAIL = #{email} AND PASSWORD = #{password}
+  </select> <!--안쓸듯?-->
+
+  <insert id="addUser" parameterType="com.oopsw.seongsubean.account.dto.UserDTO">
+    INSERT INTO USER_INFO (email, nickname, password, birthdate, phone_number, join_date)
+    VALUES (#{email}, #{nickName}, #{password}, #{birthDate}, #{phoneNumber}, NOW())
+  </insert>
+  <select id="getUserByEmailAndPassword" parameterType="com.oopsw.seongsubean.account.dto.UserDTO"
+    resultType="com.oopsw.seongsubean.account.dto.UserDTO">
+    select email, nickname from USER_INFO
+    where EMAIL = #{email} and PASSWORD = #{password}
+  </select>
+  <select id="getMyBoards" parameterType="string" resultType="java.util.Map">
+    SELECT '자유' AS boardType, title, created_date, free_board_id AS boardId
+    FROM free_board
+    WHERE email = #{email}
+
+    UNION ALL
+
+    SELECT '제보' AS boardType, title, created_date, report_board_id AS boardId
+    FROM report_board
+    WHERE email = #{email}
+
+    ORDER BY created_date DESC
+  </select>
+
+  <select id="countMyBoards" parameterType="string" resultType="int">
+    SELECT COUNT(*) FROM (
+                           SELECT title FROM free_board WHERE email = #{email}
+                           UNION ALL
+                           SELECT title FROM report_board WHERE email = #{email}
+                         ) AS total
+  </select>
+
+  <select id="getMyReviews" parameterType="String" resultType="java.util.Map">
+    select c.CAFE_ID AS cafeId, c.CAFE_NAME AS cafeName, r.REVIEW_CONTENTS AS content, r.REVIEW_DATE AS createdDate
+    from CAFE_INFO c
+           join REVIEW r on c.CAFE_ID = r.CAFE_ID
+    where r.EMAIL= #{email}
+    order by r.REVIEW_DATE desc
+  </select>
+
+  <select id="countMyReviews" parameterType="string" resultType="int">
+    SELECT COUNT(*) FROM (SELECT REVIEW_ID FROM review WHERE email = #{email}) AS total
+  </select>
+
+  <select id="getMyCafes" resultType="java.util.Map">
+    SELECT
+      c.CAFE_ID AS cafeId,
+      c.MAIN_IMAGE AS mainImage,
+      c.CAFE_NAME AS cafeName,
+      CONCAT(c.ADDRESS, ' ', c.DETAIL_ADDRESS) AS address,
+      ROUND(IFNULL(AVG(r.STAR_SCORE), 0.0), 1) AS avgStar,
+      COUNT(r.REVIEW_ID) AS reviewCount
+    FROM CAFE_INFO c
+           LEFT JOIN REVIEW r ON c.CAFE_ID = r.CAFE_ID
+    WHERE c.EMAIL = #{email}
+    GROUP BY c.CAFE_ID
+  </select>
+
+  <select id="countMyCafes" parameterType="string" resultType="int">
+    SELECT COUNT(*) FROM (SELECT cafe_id FROM cafe_info WHERE email = #{email}) AS total
+  </select>
+
+  <select id="existsEmail" parameterType="String" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM USER_INFO
+    WHERE EMAIL = #{email}
+  </select>
+  <select id="existsNickName" parameterType="String" resultType="boolean">
+    SELECT COUNT(*) > 0
+    FROM USER_INFO
+    WHERE NICKNAME = #{nickName}
+  </select>
+
+  <select id="findByEmail" resultType="com.oopsw.seongsubean.account.dto.UserDTO">
+    SELECT email, password, role, nickname, image
+    FROM user_info
+    WHERE email = #{email}
+  </select>
+</mapper>

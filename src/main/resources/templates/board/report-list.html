@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{common/common}">
+<head>
+  <title layout:fragment="title">제보 게시판 - SeongsuBean</title>
+  <link layout:fragment="styles" rel="stylesheet" th:href="@{/css/board/report.css}" />
+</head>
+<body>
+<!-- Main Content -->
+<div layout:fragment="content">
+  <div class="container">
+    <div class="d-flex justify-content-end mb-3" sec:authorize="isAuthenticated()">
+      <button class="btn report-write-btn" onclick="location.href='/report/post'">새 글쓰기</button>
+    </div>
+    <div class="article-list">
+    </div>
+
+    <!-- Pagination -->
+    <div class="pagination"></div>
+  </div>
+</div>
+<th:block layout:fragment="scripts">
+  <script th:src="@{/js/board/report-list.js}"></script>
+</th:block>
+</body>
+</html>

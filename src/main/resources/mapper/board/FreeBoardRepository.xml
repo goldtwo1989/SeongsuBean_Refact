@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.oopsw.seongsubean.board.repository.FreeBoardRepository">
+  <insert id="addFreeBoard" useGeneratedKeys="true" keyProperty="freeBoardId" parameterType="com.oopsw.seongsubean.board.dto.FreeBoardDTO">
+    INSERT INTO FREE_BOARD (TITLE, HEAD_WORD, CONTENT, CREATED_DATE, EMAIL)
+    VALUES (#{title}, #{headWord}, #{content}, NOW(), #{email})
+  </insert>
+  <insert id="addFreeBoardImages" parameterType="map">
+    INSERT INTO FREE_BOARD_IMAGE (IMAGE, FREE_BOARD_ID)
+    VALUES (#{image}, #{freeBoardId})
+  </insert>
+  <select id="getFreeBoardList" resultType="com.oopsw.seongsubean.board.dto.FreeBoardDTO">
+    SELECT
+      f.FREE_BOARD_ID AS freeboardId,
+      f.TITLE AS title,
+      f.CONTENT AS content,
+      f.CREATED_DATE AS createdDate,
+      u.NICKNAME AS nickName,
+      (SELECT i.IMAGE
+       FROM FREE_BOARD_IMAGE i
+       WHERE i.FREE_BOARD_ID = f.FREE_BOARD_ID
+          LIMIT 1) AS thumbnailImage
+    FROM
+      FREE_BOARD f
+      LEFT JOIN
+      USER_INFO u ON f.EMAIL = u.EMAIL
+    ORDER BY
+      f.CREATED_DATE DESC
+    LIMIT #{size} OFFSET #{offset}
+  </select>
+  <select id="getFreeBoardDetail" parameterType="int" resultType="com.oopsw.seongsubean.board.dto.FreeBoardDTO">
+    SELECT
+      f.FREE_BOARD_ID AS freeboardId,
+      f.TITLE AS title,
+      f.CONTENT AS content,
+      f.EMAIL AS email,
+      f.CREATED_DATE AS createdDate,
+      u.IMAGE AS profileImage,
+      u.NICKNAME AS  nickName
+    FROM FREE_BOARD f
+           JOIN USER_INFO u ON f.EMAIL = u.EMAIL
+    WHERE f.FREE_BOARD_ID = #{freeBoardId}
+  </select>
+  <select id="getFreeBoardDetailImages" parameterType="int" resultType="String">
+    SELECT IMAGE
+    FROM FREE_BOARD_IMAGE
+    WHERE FREE_BOARD_ID = #{freeBoardId}
+  </select>
+  <update id="setFreeBoardDetail" parameterType="com.oopsw.seongsubean.board.dto.FreeBoardDTO">
+    UPDATE FREE_BOARD
+    SET
+      TITLE   = IF(#{title} IS NOT NULL, #{title}, TITLE),
+      CONTENT = IF(#{content} IS NOT NULL, #{content}, CONTENT)
+    WHERE FREE_BOARD_ID = #{freeBoardId}
+  </update>
+  <delete id="removeFreeBoard" parameterType="int">
+    DELETE FROM FREE_BOARD
+    WHERE FREE_BOARD_ID = #{freeBoardId}
+  </delete>
+  <delete id="removeFreeBoardImages" parameterType="int">
+    DELETE FROM FREE_BOARD_IMAGE
+    WHERE FREE_BOARD_ID = #{freeBoardId}
+  </delete>
+  <insert id="addFreeBoardComment" useGeneratedKeys="true" keyProperty="freeBoardCommentId" parameterType="com.oopsw.seongsubean.board.dto.FreeBoardCommentDTO">
+    INSERT INTO FREE_BOARD_COMMENT (COMMENTS, COMMENT_DATE, FREE_BOARD_ID, EMAIL)
+    VALUES (#{content}, NOW(), #{freeBoardId}, #{email})
+  </insert>
+  <select id="getFreeBoardDetailComments" parameterType="int" resultType="com.oopsw.seongsubean.board.dto.FreeBoardCommentDTO">
+    SELECT
+    c.FREE_BOARD_COMMENT_ID AS freeBoardCommentId,
+    c.COMMENTS AS content,
+    c.EMAIL AS email,
+    u.NICKNAME AS nickName,
+    u.IMAGE AS profileImage,
+    c.FREE_BOARD_ID AS freeBoardId,
+    c.COMMENT_DATE AS createdDate
+    FROM FREE_BOARD_COMMENT c
+    JOIN USER_INFO u ON c.EMAIL = u.EMAIL
+    WHERE c.FREE_BOARD_ID = #{freeBoardId}
+    ORDER BY c.COMMENT_DATE ASC
+  </select>
+  <delete id="removeFreeBoardComment" parameterType="int">
+    DELETE FROM FREE_BOARD_COMMENT
+    WHERE FREE_BOARD_COMMENT_ID = #{freeBoardCommentId}
+  </delete>
+  <select id="getCommentOwnerEmail" resultType="string" parameterType="int">
+    SELECT EMAIL
+    FROM FREE_BOARD_COMMENT
+    WHERE FREE_BOARD_COMMENT_ID = #{freeBoardCommentId}
+  </select>
+  <select id="getFreeBoardOwnerEmail" resultType="string" parameterType="int">
+    SELECT EMAIL
+    FROM FREE_BOARD
+    WHERE FREE_BOARD_ID = #{freeBoardId}
+  </select>
+  <select id="getTotalFreeBoardCount" resultType="int">
+    SELECT COUNT(*) FROM FREE_BOARD
+  </select>
+  <select id="searchFreeBoard" resultType="com.oopsw.seongsubean.board.dto.FreeBoardDTO">
+    SELECT f.FREE_BOARD_ID AS freeBoardId,
+    f.TITLE AS title,
+    f.HEAD_WORD AS headWord,
+    f.CONTENT AS content,
+    f.CREATED_DATE AS createdDate,
+    f.EMAIL AS email,
+    u.IMAGE AS profileImage,
+    u.NICKNAME AS nickName
+    FROM FREE_BOARD f
+    LEFT JOIN USER_INFO u ON f.EMAIL = u.EMAIL
+    <where>
+      <choose>
+        <when test='"title".equals(type)'>
+          f.TITLE LIKE CONCAT('%', #{keyword}, '%')
+        </when>
+        <when test='"content".equals(type)'>
+          f.CONTENT LIKE CONCAT('%', #{keyword}, '%')
+        </when>
+        <when test='"writer".equals(type)'>
+          u.NICKNAME LIKE CONCAT('%', #{keyword}, '%')
+        </when>
+        <when test='"title_content".equals(type)'>
+          (f.TITLE LIKE CONCAT('%', #{keyword}, '%') OR f.CONTENT LIKE CONCAT('%', #{keyword}, '%'))
+        </when>
+        <otherwise>
+          1=0
+        </otherwise>
+      </choose>
+    </where>
+    ORDER BY f.CREATED_DATE DESC
+  </select>
+</mapper>

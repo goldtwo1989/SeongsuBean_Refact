@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Seongsu Bean - 로그인</title>
+  <link rel="stylesheet" th:href="@{/css/account/login-view.css}">
+</head>
+<body>
+<div class="login-wrapper" th:style="'background-image: url(' + @{/images/account/background.png} + ');'">
+  <div class="outer-box">
+    <div class="login-box">
+      <img th:src="@{/images/common/logo.png}" alt="Seongsu Bean Logo" class="logo">
+      <h2>LOGIN</h2>
+      <form class="login-form" th:action="@{/account/login}" method="post">
+        <input type="email" name="email" placeholder="이메일">
+        <input type="password" name="password" placeholder="비밀번호">
+        <div th:if="${param.error}">
+          <div class="form-error">이메일 또는 비밀번호가 틀렸습니다.</div>
+        </div>
+        <button type="submit" class="btn btn-login">로그인</button>
+      </form>
+      <div class="divider"></div> <!-- 선 추가 -->
+      <form th:action="@{/account/join}" method="get">
+        <button type="submit" class="btn btn-signup">회원가입</button>
+      </form>
+
+      <div class="sns-section">
+        <div class="sns-divider">
+          <div class="line"></div>
+          <span>SNS LOGIN</span>
+          <div class="line"></div>
+        </div>
+        <div class="sns-icons">
+          <a href="/oauth2/authorization/google">
+            <img th:src="@{/images/account/googlelogo.png}" alt="Google Login">
+          </a>
+          <a href="/oauth2/authorization/kakao">
+            <img th:src="@{/images/account/kakaologo.png}" alt="Kakao Login">
+          </a>
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">©Designed by SeongsuBean</div>
+  <script th:if="${joinSuccess}">
+    alert("회원가입이 완료되었습니다!");
+  </script>
+</div>
+</body>
+</html>
