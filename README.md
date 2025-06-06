@@ -9,9 +9,9 @@
 
 🎯 리팩토링 목적
 
-- 불필요한 변수 및 의존성 정리 -> 팀코드 리뷰 및 클린코드 지향 <br>
-- Controller/RestController 재정의 -> 분산 컴퓨팅(클라우드서비스)의 필요성 체감 <br>
-- 테스트 코드 보완(레포지토리, 서비스 -> Junit/ 컨트롤러 -> postman, swagger) <br>
+- 불필요한 변수 및 의존성 정리 -> 팀코드 리뷰 및 클린코드 지향
+- Controller/RestController 재정의 -> 분산 컴퓨팅(클라우드서비스)의 필요성 체감
+- 테스트 코드 보완(레포지토리, 서비스 -> Junit/ 컨트롤러 -> postman, swagger) 
 - API 응답 구조 개선 / 이미지 업로드 방식 개선
 
 <br>
