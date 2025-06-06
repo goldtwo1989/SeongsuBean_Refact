@@ -1,14 +1,14 @@
 # SeongsuBean
 성수동 카페 웹 - Springboot 프레임워크 기반 웹 개발 프로젝트
-<br>
+
 프로젝트 기간 : 2025.05.20 ~ 2025.06.05
-<br>
+
 프로젝트 원본 : https://github.com/Ui-Geol/SeongsuBean
 
 
-<br>
+
 🎯 리팩토링 목적
-<br>
+
 - 불필요한 변수 및 의존성 정리 -> 팀코드 리뷰 및 클린코드 지향 <br>
 - Controller/RestController 재정의 -> 분산 컴퓨팅(클라우드서비스)의 필요성 체감 <br>
 - 테스트 코드 보완(레포지토리, 서비스 -> Junit/ 컨트롤러 -> postman, swagger) <br>
@@ -20,7 +20,6 @@
 - [브랜치 전략](#브랜치-전략)
 - [add와 implement의 차이](#add와-implemnt의-차이점)
 - [modify와 fix와 correct의 차이점](#modify와-fix와-correct의-차이점)
-
 
 ---
 <br>
